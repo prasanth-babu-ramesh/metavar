@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metavar | Biological Readiness Layer</title>
+    <style>
+        :root {
+            --bg-base: #020617;
+            --bg-surface: #0f172a;
+            --bg-surface-elevated: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --brand-primary: #0ea5e9;
+            --brand-accent: #0d9488;
+            --brand-accent-hover: #14b8a6;
+            --status-go: #10b981;
+            --status-nogo: #ef4444;
+            --status-reform: #f59e0b;
+            --border-subtle: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Nav */
+        header {
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav { display: flex; justify-content: space-between; align-items: center; height: 4.5rem; }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 0.05em; color: var(--text-main); }
+        .logo span { color: var(--brand-accent-hover); }
+        .nav-links { display: flex; gap: 2rem; font-weight: 500; font-size: 0.95rem; }
+        .nav-links a { color: var(--text-muted); transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text-main); }
+        
+        .btn {
+            background: var(--brand-accent);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+        .btn:hover { background: var(--brand-accent-hover); transform: translateY(-1px); }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-outline:hover { border-color: var(--brand-accent); color: var(--brand-accent); background: transparent; }
+
+        /* Hero */
+        .hero {
+            padding: 8rem 0 6rem;
+            text-align: center;
+            background: radial-gradient(circle at top, var(--bg-surface-elevated) 0%, var(--bg-base) 60%);
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            max-width: 1000px;
+            margin-inline: auto;
+            letter-spacing: -0.02em;
+        }
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+        }
+        .hero-cta { display: flex; gap: 1rem; justify-content: center; }
+
+        /* Section structure */
+        .section { padding: 7rem 0; border-top: 1px solid var(--border-subtle); }
+        .section-alt { background: var(--bg-surface); }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-title { font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; letter-spacing: -0.01em; }
+        .section-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; }
+
+        /* Problem Section */
+        .loop-container {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg-base); padding: 2.5rem; border-radius: 8px;
+            border: 1px dashed var(--border-subtle); margin-bottom: 4rem;
+            overflow-x: auto; gap: 1rem;
+        }
+        .loop-step {
+            text-align: center; font-weight: 600; color: var(--text-muted);
+            flex: 1; min-width: 120px;
+        }
+        .loop-arrow { color: var(--text-muted); font-weight: bold; }
+        .loop-fail { color: var(--status-nogo); }
+
+        .risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .risk-card {
+            background: var(--bg-base); border: 1px solid var(--border-subtle);
+            padding: 2rem; border-radius: 8px;
+        }
+        .risk-card h3 { color: var(--text-main); font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .signal { display: block; color: var(--brand-primary); font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .risk-card p { color: var(--text-muted); font-size: 0.95rem; }
+        .actual-risk { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); color: var(--status-reform); font-size: 0.95rem; }
+        .actual-risk b { color: #fff; }
+
+        /* Product Section */
+        .filters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .filter-card {
+            background: linear-gradient(180deg, var(--bg-surface-elevated) 0%, var(--bg-surface) 100%);
+            border: 1px solid var(--border-subtle); padding: 3rem 2rem; border-radius: 12px; text-align: center;
+        }
+        .filter-icon {
+            width: 48px; height: 48px; border-radius: 12px; background: rgba(13, 148, 136, 0.1);
+            color: var(--brand-accent-hover); display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        .filter-title { font-size: 1.5rem; margin-bottom: 1rem; }
+        .filter-text { color: var(--text-muted); font-size: 1rem; }
+
+        /* Dashboard Section */
+        .dashboard-ui {
+            background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 12px;
+            overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .dash-header {
+            background: var(--bg-surface-elevated); padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-subtle);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .dash-body { display: flex; min-height: 450px; }
+        @media (max-width: 768px) { .dash-body { flex-direction: column; } .filters-grid { grid-template-columns: 1fr; } }
+        .dash-list { flex: 1; border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; background: var(--bg-surface); }
+        .dash-item {
+            padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-subtle); cursor: pointer;
+            transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .dash-item:hover, .dash-item.active { background: var(--bg-surface-elevated); }
+        .dash-item.active { border-left: 4px solid var(--brand-accent-hover); }
+        
+        .dash-detail { flex: 2; padding: 3rem; background: var(--bg-base); }
+        .score-badge { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .status { padding: 0.35rem 0.85rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; }
+        .status.go { background: rgba(16, 185, 129, 0.1); color: var(--status-go); }
+        .status.nogo { background: rgba(239, 68, 68, 0.1); color: var(--status-nogo); }
+        .status.reformulate { background: rgba(245, 158, 11, 0.1); color: var(--status-reform); border: 1px solid rgba(245, 158, 11, 0.2); }
+
+        .detail-card { display: none; }
+        .detail-card.active { display: block; animation: fadeUp 0.4s ease; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .metric-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 1.25rem 0; border-bottom: 1px solid var(--border-subtle); }
+        .metric-row:last-child { border-bottom: none; }
+        .metric-label { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; width: 35%; }
+        .metric-value { font-weight: 400; font-size: 1rem; width: 65%; color: var(--text-main); }
+
+        /* Pilot & Scalability */
+        .blueprint-box {
+            background: var(--bg-base); border-radius: 12px; padding: 3rem; border: 1px solid var(--border-subtle);
+        }
+        .blueprint-box h4 { margin-bottom: 1rem; font-size: 1.5rem; color: var(--text-main); }
+        .phases { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;}
+        .phase { display: flex; gap: 1.25rem; align-items: flex-start; }
+        .phase-num { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--brand-accent-hover); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700;}
+        
+        .roadmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 3rem; }
+        .roadmap-step { background: var(--bg-surface-elevated); padding: 2rem 1.5rem; border-radius: 8px; text-align: center; border: 1px solid var(--border-subtle); }
+        .roadmap-step span { display: block; font-size: 0.8rem; color: var(--brand-accent-hover); margin-bottom: 0.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;}
+
+        /* Footer */
+        footer { background: var(--bg-surface); padding: 5rem 0 3rem; border-top: 1px solid var(--border-subtle); }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+        .founder-box h4 { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;}
+        .founder-box p { color: var(--text-muted); font-size: 0.95rem;}
+        .disclaimer { border-left: 3px solid var(--status-reform); padding-left: 1.5rem; color: var(--text-muted); font-size: 0.9rem;}
+        .copyright { text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-subtle); padding-top: 2rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container nav">
+        <nav>
+            <div class="logo">META<span>VAR</span></div>
+            <div class="nav-links">
+                <a href="#problem">Problem</a>
+                <a href="#product">Product</a>
+                <a href="#dashboard">Dashboard</a>
+                <a href="#pilot">Pilot</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <h1 class="hero-title">The Pre-Certification Biological Readiness Layer for Sustainable Packaging</h1>
+        <p class="hero-subtitle">Verify bioaccessibility and true microbial carbon assimilation before expensive third-party certified testing, scale-up, or public green claims.</p>
+        <div class="hero-cta">
+            <a href="#dashboard" class="btn">Request a BioReadiness Screen™</a>
+            <a href="#pilot" class="btn btn-outline">Explore Pilot Blueprint</a>
+        </div>
+    </div>
+</section>
+
+<section id="problem" class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">The Blindspot in Packaging Testing</h2>
+            <p class="section-desc">The current process is an expensive loop of trial and error driven by biological ambiguity.</p>
+        </div>
+
+        <div class="loop-container">
+            <div class="loop-step">Formulate</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step">Internal Test</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step">Third-Party Lab</div>
+            <div class="loop-arrow loop-fail">→</div>
+            <div class="loop-step loop-fail">Fail / Unclear</div>
+            <div class="loop-arrow loop-fail">↺</div>
+            <div class="loop-step">Repeat</div>
+        </div>
+
+        <div class="risk-grid">
+            <div class="risk-card">
+                <span class="signal">Misleading Signal: Weight Loss</span>
+                <h3>Assumed to be Degradation</h3>
+                <div class="actual-risk"><b>Actual Scientific Risk:</b> Additive or leachate loss escaping the material matrix without genuine biological breakdown.</div>
+            </div>
+            <div class="risk-card">
+                <span class="signal">Misleading Signal: Surface Cracking</span>
+                <h3>Assumed to be Biodegradation</h3>
+                <div class="actual-risk"><b>Actual Scientific Risk:</b> Physical fragmentation. Generating microplastics rather than achieving metabolic assimilation.</div>
+            </div>
+            <div class="risk-card">
+                <span class="signal">Misleading Signal: Microbial Growth</span>
+                <h3>Assumed to indicate polymer consumption</h3>
+                <div class="actual-risk"><b>Actual Scientific Risk:</b> Biofilm colonization without true polymer-carbon assimilation (microbes feeding off temporary surfaces).</div>
+            </div>
+            <div class="risk-card">
+                <span class="signal">Misleading Signal: CO2/CH4 Evolution</span>
+                <h3>Assumed to be full mineralization</h3>
+                <div class="actual-risk"><b>Actual Scientific Risk:</b> Consumption of background carbon or soluble residues, skewing the final metrics.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="product" class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">The Core Product: BioReadiness Screen™</h2>
+            <p class="section-desc">A predictive go/no-go decision layer implemented before formal certification testing.</p>
+        </div>
+
+        <div class="filters-grid">
+            <div class="filter-card">
+                <div class="filter-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+                </div>
+                <h3 class="filter-title">Bioaccessible?</h3>
+                <p class="filter-text">Has weathering, oxidation, or pretreatment made the plastic-derived carbon physically and chemically reachable to biology?</p>
+            </div>
+            <div class="filter-card">
+                <div class="filter-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><circle cx="12" cy="13" r="5"/></svg>
+                </div>
+                <h3 class="filter-title">Assimilable?</h3>
+                <p class="filter-text">Are microbes utilizing the polymer backbone, or just consuming additives and leachates? Verified via CCR-informed biological logic.</p>
+            </div>
+            <div class="filter-card">
+                <div class="filter-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h3 class="filter-title">Ready?</h3>
+                <p class="filter-text">Does the evidence mandate advancing to certified testing labs, or hold back for targeted formulation adjustment?</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard" class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Interactive Decision Dashboard</h2>
+            <p class="section-desc">Explore live outputs from a sample BioReadiness Screen™ evaluation.</p>
+        </div>
+
+        <div class="dashboard-ui">
+            <div class="dash-header">
+                <div>
+                    <h3 style="font-size: 1.1rem;">Metavar Analytics Workspace</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Project: Polymer Formulation Evaluation Q3</p>
+                </div>
+                <div class="score-badge" style="color: var(--text-muted); font-size: 0.9rem;">View Mode: Executive Summary</div>
+            </div>
+            <div class="dash-body">
+                <div class="dash-list">
+                    <div class="dash-item active" onclick="switchTab('mb01')">
+                        <div>
+                            <div style="font-weight: 600;">MB-01</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">PBAT/PLA Blend Film</div>
+                        </div>
+                        <div class="status go">GO</div>
+                    </div>
+                    <div class="dash-item" onclick="switchTab('mb02')">
+                        <div>
+                            <div style="font-weight: 600;">MB-02</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Additive-Treated PE</div>
+                        </div>
+                        <div class="status nogo">NO-GO</div>
+                    </div>
+                    <div class="dash-item" onclick="switchTab('mb03')">
+                        <div>
+                            <div style="font-weight: 600;">MB-03</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Bio-Coated Paper</div>
+                        </div>
+                        <div class="status reformulate">REFORMULATE</div>
+                    </div>
+                </div>
+                <div class="dash-detail">
+                    <div id="mb01" class="detail-card active">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                            <div>
+                                <h2 style="font-size: 2rem;">MB-01 Dataset</h2>
+                                <p style="color: var(--text-muted);">Target: Proceed to formal testing</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Readiness Score</div>
+                                <div class="score-badge" style="color: var(--status-go); font-size: 2.5rem; line-height: 1;">73<span style="font-size: 1.25rem; color: var(--text-muted);">/100</span></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Primary Evidence Domain</span>
+                            <span class="metric-value">Strong bioaccessibility & moderate-high assimilation confidence.</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Risk Profile</span>
+                            <span class="metric-value">Controlled false-positive risk. Minimal leachate-only feeding detected.</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Executive Decision</span>
+                            <span class="metric-value" style="color: var(--status-go); font-weight: 600;">Proceed. Manageable false-positive risk limits expected formal testing failure.</span>
+                        </div>
+                    </div>
+                    
+                    <div id="mb02" class="detail-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                            <div>
+                                <h2 style="font-size: 2rem;">MB-02 Dataset</h2>
+                                <p style="color: var(--text-muted);">Target: Hold back from testing</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Readiness Score</div>
+                                <div class="score-badge" style="color: var(--status-nogo); font-size: 2.5rem; line-height: 1;">31<span style="font-size: 1.25rem; color: var(--text-muted);">/100</span></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Primary Evidence Domain</span>
+                            <span class="metric-value">Signal heavily driven by leachate consumption & fragmentation.</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Risk Profile</span>
+                            <span class="metric-value">High fragmentation risk. Little true polymer-carbon assimilation.</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Executive Decision</span>
+                            <span class="metric-value" style="color: var(--status-nogo); font-weight: 600;">Do not send to expensive labs. Correct leachate issues in formulation loop first.</span>
+                        </div>
+                    </div>
+
+                    <div id="mb03" class="detail-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                            <div>
+                                <h2 style="font-size: 2rem;">MB-03 Dataset</h2>
+                                <p style="color: var(--text-muted);">Target: Formulation adjustment required</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Readiness Score</div>
+                                <div class="score-badge" style="color: var(--status-reform); font-size: 2.5rem; line-height: 1;">57<span style="font-size: 1.25rem; color: var(--text-muted);">/100</span></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Primary Evidence Domain</span>
+                            <span class="metric-value">Moderate bioaccessibility beneath barrier layer.</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Risk Profile</span>
+                            <span class="metric-value">Coating layer dominates biological response, obscuring substrate assimilation.</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Executive Decision</span>
+                            <span class="metric-value" style="color: var(--status-reform); font-weight: 600;">Reformulate overlay coating. Moderate accessibility exists but validation path is blocked.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="pilot" class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Deployment & Scalability</h2>
+            <p class="section-desc">Designed for packaging R&D, corporate sustainability teams, and technical procurement.</p>
+        </div>
+
+        <div class="blueprint-box">
+            <h4>100+ Accelerator Pilot Format</h4>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; max-width: 650px;">A $50k corporate pilot to definitively screen 5-10 supplier packaging formulations over 6-9 months, putting an end to certification ambiguity.</p>
+            
+            <div class="phases">
+                <div class="phase">
+                    <div class="phase-num">1</div>
+                    <div>
+                        <div style="font-weight: 600;">Phase 1: Scope & Intake</div>
+                        <div style="font-size: 0.95rem; color: var(--text-muted);">Defining constraints and formulation matrices.</div>
+                    </div>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">2</div>
+                    <div>
+                        <div style="font-weight: 600;">Phase 2: Control Matrix Design</div>
+                        <div style="font-size: 0.95rem; color: var(--text-muted);">Locking the biological benchmarking vectors.</div>
+                    </div>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">3</div>
+                    <div>
+                        <div style="font-weight: 600;">Phase 3: Assay Screening & Readiness Scoring</div>
+                        <div style="font-size: 0.95rem; color: var(--text-muted);">Deploying physical testing and computational analytics.</div>
+                    </div>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">4</div>
+                    <div>
+                        <div style="font-weight: 600;">Phase 4: Actionable Decision Dashboard</div>
+                        <div style="font-size: 0.95rem; color: var(--text-muted);">Final delivery of empirical go/no-go datasets.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 style="margin-top: 5rem; text-align: center; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem;">The Metavar Product Roadmap</h4>
+        <div class="roadmap">
+            <div class="roadmap-step">
+                <span>Phase I</span>
+                Manual Expert Pilots
+            </div>
+            <div class="roadmap-step">
+                <span>Phase II</span>
+                Standardized BioAssimilation™ Protocols
+            </div>
+            <div class="roadmap-step">
+                <span>Phase III</span>
+                DegradomeOS™ Software Platform
+            </div>
+            <div class="roadmap-step">
+                <span>Phase IV</span>
+                BioTransform™ IP Engine
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="founder-box">
+                <h4>Technical Leadership</h4>
+                <p style="font-weight: 600; font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.5rem;">Prasanth Babu Ramesh, PhD</p>
+                <p>Environmental Biotechnology specialist focusing on plastic weathering & microbial colonization. Former Assistant Manager of Biodegradation Services at Intertek India, bringing deep visibility into the failures of standard macro-testing.</p>
+            </div>
+            <div>
+                <div class="disclaimer">
+                    <p><b>Regulatory Notice:</b> Metavar is a pre-certification decision-support tool designed for R&D due-diligence. It does not replace or issue accredited legal certifications.</p>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <a href="mailto:contact@metavar.com" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Contact Metavar</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; <script>document.write(new Date().getFullYear())</script> Metavar Technologies. All Rights Reserved. BioReadiness Screen™, BioAssimilation™, and DegradomeOS™ are trademarks of Metavar.
+        </div>
+    </div>
+</footer>
+
+<script>
+    function switchTab(id) {
+        document.querySelectorAll('.dash-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.detail-card').forEach(el => el.classList.remove('active'));
+        
+        event.currentTarget.classList.add('active');
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
